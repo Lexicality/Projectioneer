@@ -32,8 +32,13 @@ var ply = {
 	},
 	dirn: 0,
 	dir: { x: 1, y: 0 },
-	draw: function(ctx) {
-		var x = this.pos.x, y = this.pos.y;
+	draw: function(ctx, isOffset) {
+		var x, y;
+		if (isOffset) {
+			x = 0, y = 0;
+		} else {
+			x = this.pos.x, y = this.pos.y;
+		}
 		// Direction line
 		var dir = mul(this.dir, 10);
 		ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
@@ -113,9 +118,7 @@ function plyInput(dtime) {
 	ply.pos = clamp(ply.pos, { x: 100, y: 100 });
 }
 
-function loop(dtime) {
-	plyInput(dtime);
-
+function drawRaw(ctx) {
 	ctx.save()
 	viewport(5, 5, 100, 100);
 	// Draw Wall
@@ -124,6 +127,25 @@ function loop(dtime) {
 	ply.draw(ctx);
 	// End viewport #1
 	ctx.restore();
+}
+
+function drawOffset(ctx) {
+	ctx.save()
+	viewport(110, 5, 100, 100);
+	ctx.translate(50, 50);
+	// Draw Wall
+	wall.draw(ctx, ply.pos);
+	// Draw ply
+	ply.draw(ctx, true);
+	// End viewport #2
+	ctx.restore();
+}
+
+function loop(dtime) {
+	plyInput(dtime);
+
+	drawRaw(ctx);
+	drawOffset(ctx);
 }
 
 var last = 0;
