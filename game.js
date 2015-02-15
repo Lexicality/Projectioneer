@@ -25,6 +25,14 @@ function clamp(a, b) {
 	}
 }
 
+function rotate(a, b) {
+	var s = Math.sin(b), c = Math.cos(b);
+	return {
+		x: c * a.x - s * a.y,
+		y: s * a.x + c * a.y
+	};
+}
+
 var ply = {
 	pos: {
 		x: 50,
@@ -33,14 +41,14 @@ var ply = {
 	dirn: 0,
 	dir: { x: 1, y: 0 },
 	draw: function(ctx, isOffset) {
-		var x, y;
+		var x, y, dir;
 		if (isOffset) {
-			x = 0, y = 0;
+			x = 0, y = 0, dir = {x: 0, y: 1};
 		} else {
-			x = this.pos.x, y = this.pos.y;
+			x = this.pos.x, y = this.pos.y, dir = this.dir;
 		}
 		// Direction line
-		var dir = mul(this.dir, 10);
+		dir = mul(dir, 10);
 		ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
 		ctx.lineWidth = 1;
 		ctx.beginPath();
@@ -62,12 +70,14 @@ var wall = {
 		x: 70,
 		y: 20
 	},
-	draw: function(ctx, offset) {
+	draw: function(ctx, offset, offsetAng) {
 		var a = this.a, b = this.b;
 
 		if (offset) {
 			a = sub(a, offset);
 			b = sub(b, offset);
+			a = rotate(a, offsetAng);
+			b = rotate(b, offsetAng);
 		}
 
 		ctx.beginPath();
@@ -134,7 +144,7 @@ function drawOffset(ctx) {
 	viewport(110, 5, 100, 100);
 	ctx.translate(50, 50);
 	// Draw Wall
-	wall.draw(ctx, ply.pos);
+	wall.draw(ctx, ply.pos, ply.dirn);
 	// Draw ply
 	ply.draw(ctx, true);
 	// End viewport #2
