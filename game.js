@@ -1,4 +1,11 @@
 
+function sub(a, b) {
+	return {
+		x: a.x - b.x,
+		y: a.y - b.y
+	};
+}
+
 var ply = {
 	x: 50,
 	y: 50
@@ -12,6 +19,21 @@ var wall = {
 	b: {
 		x: 70,
 		y: 20
+	},
+	draw: function(offset) {
+		var a = this.a, b = this.b;
+		
+		if (offset) {
+			a = sub(a, offset);
+			b = sub(b, offset);
+		}
+
+		ctx.beginPath();
+		ctx.strokeStyle = 'yellow';
+		ctx.lineWidth = 2;
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+		ctx.stroke();
 	}
 };
 
@@ -43,12 +65,7 @@ function loop(dtime) {
 	ctx.save()
 	viewport(5, 5, 100, 100);
 	// Draw Wall
-	ctx.beginPath();
-	ctx.strokeStyle = 'yellow';
-	ctx.lineWidth = 2;
-	ctx.moveTo(wall.a.x, wall.a.y);
-	ctx.lineTo(wall.b.x, wall.b.y);
-	ctx.stroke();
+	wall.draw(null);
 	// Draw ply
 	drawPly();
 	// End viewport #1
