@@ -1,4 +1,3 @@
-
 function sub(a, b) {
 	return {
 		x: a.x - b.x,
@@ -8,7 +7,12 @@ function sub(a, b) {
 
 var ply = {
 	x: 50,
-	y: 50
+	y: 50,
+	draw: function(ctx) {
+		var x = this.x, y = this.y;
+		ctx.fillStyle = 'blue';
+		ctx.fillRect(x-1, y - 1, 2, 2);
+	}
 };
 
 var wall = {
@@ -20,7 +24,7 @@ var wall = {
 		x: 70,
 		y: 20
 	},
-	draw: function(offset) {
+	draw: function(ctx, offset) {
 		var a = this.a, b = this.b;
 
 		if (offset) {
@@ -54,12 +58,6 @@ function viewport(x, y, width, height) {
 	ctx.strokeRect(0, 0, width, height);
 }
 
-function drawPly() {
-	var x = ply.x, y = ply.y;
-	ctx.fillStyle = 'blue';
-	ctx.fillRect(x-1, y - 1, 2, 2);
-}
-
 function plyInput() {
 	// Naive implemetnation
 	if (keys.up) {
@@ -85,16 +83,15 @@ function plyInput() {
 	}
 }
 
-
 function loop(dtime) {
 	plyInput();
 
 	ctx.save()
 	viewport(5, 5, 100, 100);
 	// Draw Wall
-	wall.draw(null);
+	wall.draw(ctx, null);
 	// Draw ply
-	drawPly();
+	ply.draw(ctx);
 	// End viewport #1
 	ctx.restore();
 }
