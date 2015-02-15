@@ -143,6 +143,7 @@ function drawOffset(ctx) {
 	ctx.save()
 	viewport(110, 5, 100, 100);
 	ctx.translate(50, 50);
+	ctx.rotate(Math.PI);
 	// Draw Wall
 	wall.draw(ctx, ply.pos, ply.dirn);
 	// Draw ply
