@@ -22,7 +22,7 @@ var wall = {
 	},
 	draw: function(offset) {
 		var a = this.a, b = this.b;
-		
+
 		if (offset) {
 			a = sub(a, offset);
 			b = sub(b, offset);
@@ -60,8 +60,35 @@ function drawPly() {
 	ctx.fillRect(x-1, y - 1, 2, 2);
 }
 
+function plyInput() {
+	// Naive implemetnation
+	if (keys.up) {
+		ply.y--;
+	} else if (keys.down) {
+		ply.y++;
+	}
+	if (ply.y < 0) {
+		ply.y = 0;
+	} else if (ply.y > 100) {
+		ply.y = 100;
+	}
+
+	if (keys.right) {
+		ply.x++;
+	} else if (keys.left) {
+		ply.x--;
+	}
+	if (ply.x < 0) {
+		ply.x = 0;
+	} else if (ply.x > 100) {
+		ply.x = 100;
+	}
+}
+
 
 function loop(dtime) {
+	plyInput();
+
 	ctx.save()
 	viewport(5, 5, 100, 100);
 	// Draw Wall
