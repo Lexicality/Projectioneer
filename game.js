@@ -4,12 +4,45 @@ function sub(a, b) {
 		y: a.y - b.y
 	};
 }
+function add(a, b) {
+	return {
+		x: a.x + b.x,
+		y: a.y + b.y
+	};
+}
+
+function mul(a, b) {
+	return {
+		x: a.x * b,
+		y: a.y * b
+	};
+}
+
+function clamp(a, b) {
+	return {
+		x: a.x > b.x ? b.x : (a.x < 0 ? 0 : a.x ),
+		y: a.y > b.y ? b.y : (a.y < 0 ? 0 : a.y )
+	}
+}
 
 var ply = {
-	x: 50,
-	y: 50,
+	pos: {
+		x: 50,
+		y: 50
+	},
+	dirn: 0,
+	dir: { x: 1, y: 0 },
 	draw: function(ctx) {
-		var x = this.x, y = this.y;
+		var x = this.pos.x, y = this.pos.y;
+		// Direction line
+		var dir = mul(this.dir, 10);
+		ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.lineTo(x + dir.x, y + dir.y);
+		ctx.stroke();
+		// Lil guy
 		ctx.fillStyle = 'blue';
 		ctx.fillRect(x-1, y - 1, 2, 2);
 	}
@@ -58,33 +91,30 @@ function viewport(x, y, width, height) {
 	ctx.strokeRect(0, 0, width, height);
 }
 
-function plyInput() {
+function plyInput(dtime) {
 	// Naive implemetnation
 	if (keys.up) {
-		ply.y--;
+		ply.pos = add(ply.pos, ply.dir);
 	} else if (keys.down) {
-		ply.y++;
-	}
-	if (ply.y < 0) {
-		ply.y = 0;
-	} else if (ply.y > 100) {
-		ply.y = 100;
+		ply.pos = sub(ply.pos, ply.dir);
 	}
 
-	if (keys.right) {
-		ply.x++;
-	} else if (keys.left) {
-		ply.x--;
+	var val = dtime / 200;
+	if (keys.left) {
+		ply.dirn -= val;
+	} else if (keys.right) {
+		ply.dirn += val;
 	}
-	if (ply.x < 0) {
-		ply.x = 0;
-	} else if (ply.x > 100) {
-		ply.x = 100;
-	}
+	ply.dir = {
+		x: Math.sin(ply.dirn),
+		y: Math.cos(ply.dirn)
+	};
+
+	ply.pos = clamp(ply.pos, { x: 100, y: 100 });
 }
 
 function loop(dtime) {
-	plyInput();
+	plyInput(dtime);
 
 	ctx.save()
 	viewport(5, 5, 100, 100);
