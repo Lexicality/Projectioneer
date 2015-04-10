@@ -86,6 +86,50 @@ var wall = {
 		ctx.moveTo(a.x, a.y);
 		ctx.lineTo(b.x, b.y);
 		ctx.stroke();
+	},
+	// I have no clue what this is doing!
+	drawBork: function(ctx, offset, offsetAng) {
+		var a = sub(this.a, offset), b = sub(this.b, offset);
+		var s = Math.sin(offsetAng), c = Math.cos(offsetAng);
+		
+		var ax, ay, az, bx, by, bz;
+
+		ax = a.x, ay = a.y, bx = b.x, by = b.y;
+
+		// "Rotation"
+		az = ax * c + ay * s,
+		bz = bx * c + by * s,
+		ax = ax * s - ay * c,
+		bx = bx * s - by * c;
+
+		// "Perspective transform"
+		var axp, bxp, ayp1, byp1, ayp2, byp2;
+
+		axp = -ax * 16 / az,
+		ayp1 = -50 / az,
+		ayp2 = 50 / az,
+		bxp = -bx * 16 / bz,
+		byp1 = -50 / bz,
+		byp2 = 50 / bz;
+
+		ctx.beginPath();
+		ctx.strokeStyle = 'yellow';
+		ctx.lineWidth = 2;
+		
+		// Top
+		ctx.moveTo(50 + axp, 50 + ayp1);
+		ctx.lineTo(50 + bxp, 50 + byp1);
+		// Bottom
+		ctx.moveTo(50 + axp, 50 + ayp2);
+		ctx.lineTo(50 + bxp, 50 + byp2);
+		// Left
+		ctx.moveTo(50 + axp, 50 + ayp1);
+		ctx.lineTo(50 + axp, 50 + ayp2);
+		// Right
+		ctx.moveTo(50 + bxp, 50 + byp1);
+		ctx.lineTo(50 + bxp, 50 + byp2);
+
+		ctx.stroke();
 	}
 };
 
@@ -152,11 +196,23 @@ function drawOffset(ctx) {
 	ctx.restore();
 }
 
+function drawBork(ctx) {
+	ctx.save()
+	viewport(220, 5, 100, 100);
+	ctx.translate(50, 50);
+	ctx.rotate(Math.PI);
+	// Draw Wall
+	wall.drawBork(ctx, ply.pos, ply.dirn);
+	// End viewport #2
+	ctx.restore();
+}
+
 function loop(dtime) {
 	plyInput(dtime);
 
 	drawRaw(ctx);
 	drawOffset(ctx);
+	drawBork(ctx);
 }
 
 var last = 0;
