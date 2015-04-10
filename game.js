@@ -97,37 +97,45 @@ var wall = {
 		ax = a.x, ay = a.y, bx = b.x, by = b.y;
 
 		// "Rotation"
-		az = ax * c + ay * s,
-		bz = bx * c + by * s,
-		ax = ax * s - ay * c,
-		bx = bx * s - by * c;
+// 		az = ax * c + ay * s,
+// 		bz = bx * c + by * s,
+// 		ax = ax * s - ay * c,
+// 		bx = bx * s - by * c;
+		ar = rotate(a, -offsetAng)
+		br = rotate(b, -offsetAng)
+		az = ar.y,
+		bz = br.y,
+		ax = ar.x,
+		bx = br.x;
 
 		// "Perspective transform"
 		var axp, bxp, ayp1, byp1, ayp2, byp2;
 
+		var height = 50;
+
 		axp = -ax * 16 / az,
-		ayp1 = -50 / az,
-		ayp2 = 50 / az,
+		ayp1 = -height / az,
+		ayp2 = height / az,
 		bxp = -bx * 16 / bz,
-		byp1 = -50 / bz,
-		byp2 = 50 / bz;
+		byp1 = -height / bz,
+		byp2 = height / bz;
 
 		ctx.beginPath();
 		ctx.strokeStyle = 'yellow';
 		ctx.lineWidth = 2;
-		
+
 		// Top
-		ctx.moveTo(50 + axp, 50 + ayp1);
-		ctx.lineTo(50 + bxp, 50 + byp1);
+		ctx.moveTo(axp,  ayp1);
+		ctx.lineTo(bxp,  byp1);
 		// Bottom
-		ctx.moveTo(50 + axp, 50 + ayp2);
-		ctx.lineTo(50 + bxp, 50 + byp2);
+		ctx.moveTo( axp,  ayp2);
+		ctx.lineTo( bxp,  byp2);
 		// Left
-		ctx.moveTo(50 + axp, 50 + ayp1);
-		ctx.lineTo(50 + axp, 50 + ayp2);
+		ctx.moveTo( axp,  ayp1);
+		ctx.lineTo( axp,  ayp2);
 		// Right
-		ctx.moveTo(50 + bxp, 50 + byp1);
-		ctx.lineTo(50 + bxp, 50 + byp2);
+		ctx.moveTo( bxp,  byp1);
+		ctx.lineTo( bxp,  byp2);
 
 		ctx.stroke();
 	}
@@ -210,9 +218,9 @@ function drawBork(ctx) {
 function loop(dtime) {
 	plyInput(dtime);
 
+	drawBork(ctx);
 	drawRaw(ctx);
 	drawOffset(ctx);
-	drawBork(ctx);
 }
 
 var last = 0;
